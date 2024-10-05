@@ -21,13 +21,13 @@ Note: Whether the applications is currently running in debug mode is determined 
 # Getting Started
 
 1. Copy the `Logging` directory into your solution
-2. Added `using BSS.Logging;` to your `.cs` file to import the namespace
-3. Initialize the Log Class with `Log.Initialize();`, (you may want to pass in a path to the log output directory and/or the padding width)
+2. Add `using BSS.Logging;` to your `.cs` file to import the namespace
+3. Initialize the `Log` class with `Log.Initialize();` (you may want to pass a path to the log output directory (default is ./logs) and/or the padding width)
 
-Now you can call for example:
+Now, for example, you can call:
 >    Log.FastLog("Info message from ThreadPool", LogSeverity.Info, "ThreadPool");
 
-This will output to the log file, and in debug mode to the console.
+This will output to the log file, and in debug mode, write to the console.
 
 Or to just write to the console in debug mode:
 >    xDebug.WriteLine("direct console write");
@@ -35,6 +35,5 @@ Or to just write to the console in debug mode:
 ---
 
 Note: You can manually invoke the initialization of the `xDebug` class, but this should normally not be necessary (static constructor)
->    if (!xDebug.IsInitialized)
-
-This should always return `true`.
+`xDebug.IsInitialized` should always return `true`
+(checking this value will initialize the class)
