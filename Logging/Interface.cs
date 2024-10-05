@@ -28,6 +28,7 @@ namespace BSS.Logging
         internal static void Initialize()
         {
             if (_isInitialized) return;
+            if (!xDebug.IsInitialized) throw new InvalidProgramException();
 
             _padding = DEFAULT_PADDING_WIDTH;
             _assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -51,6 +52,7 @@ namespace BSS.Logging
         internal static void Initialize(String assemblyPath)
         {
             if (_isInitialized) return;
+            if (!xDebug.IsInitialized) throw new InvalidProgramException();
 
             _padding = DEFAULT_PADDING_WIDTH;
             _assemblyPath = assemblyPath ?? Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -74,6 +76,7 @@ namespace BSS.Logging
         internal static void Initialize(String assemblyPath, Byte padding = DEFAULT_PADDING_WIDTH)
         {
             if (_isInitialized) return;
+            if (!xDebug.IsInitialized) throw new InvalidProgramException();
 
             _padding = padding;
 
@@ -98,6 +101,7 @@ namespace BSS.Logging
         internal static void Initialize(Byte padding = DEFAULT_PADDING_WIDTH)
         {
             if (_isInitialized) return;
+            if (!xDebug.IsInitialized) throw new InvalidProgramException();
 
             _padding = padding;
             _assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -196,7 +200,7 @@ namespace BSS.Logging
             {
                 lock (_fileLock)
                 {
-                    ColoredDebugPrint(timeStampString, formattedLogMessage.Severity, source, padding, formattedLogMessage.Message);
+                    ColoredDebugPrint(timeStampString, formattedLogMessage.Severity, severityString, source, padding, formattedLogMessage.Message);
 
                     using (StreamWriter streamWriter = new($"{_assemblyPath}\\logs\\{timeStamp:dd.MM.yyyy}.txt", true, Encoding.UTF8))
                     {
@@ -211,21 +215,25 @@ namespace BSS.Logging
         }
 
         [Conditional("DEBUG")]
-        private static void ColoredDebugPrint(String timeStampString, LogSeverity logSeverity, String source, String padding, String message)
+        private static void ColoredDebugPrint(String timeStampString, LogSeverity logSeverity, String severityString, String source, String padding, String message)
         {
-            String severityString = logSeverity switch
+            ConsoleColor foreground = logSeverity switch
             {
-                LogSeverity.Info => "\u001b[36mInfo\u001b[0m",
-                LogSeverity.Debug => "\u001b[32mDebug\u001b[0m",
-                LogSeverity.Warning => "\u001b[33mWarning\u001b[0m",
-                LogSeverity.Verbose => "\u001b[35mVerbose\u001b[0m",
-                LogSeverity.Error => "\u001b[31mError\u001b[0m",
-                LogSeverity.Critical => "\u001b[31mCritical\u001b[0m",
-                LogSeverity.Alert => "\u001b[33mAlert\u001b[0m",
-                _ => "Unknown"
+                LogSeverity.Info => ConsoleColor.DarkCyan,
+                LogSeverity.Debug => ConsoleColor.DarkGreen,
+                LogSeverity.Warning => ConsoleColor.DarkYellow,
+                LogSeverity.Verbose => ConsoleColor.Magenta,
+                LogSeverity.Error => ConsoleColor.Red,
+                LogSeverity.Critical => ConsoleColor.DarkRed,
+                LogSeverity.Alert => ConsoleColor.Yellow,
+                _ => xDebug.DefaultForegroundColor,
             };
-            
-            xDebug.WriteLine(timeStampString + severityString + source + padding + message);
+
+            Console.Write(timeStampString);
+            Console.ForegroundColor = foreground;
+            Console.Write(severityString);
+            Console.ForegroundColor = xDebug.DefaultForegroundColor;
+            Console.WriteLine(source + padding + message);
         }
     }
 }
