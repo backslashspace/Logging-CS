@@ -35,5 +35,4 @@ Or to just write to the console in debug mode:
 ---
 
 Note: You can manually invoke the initialization of the `xDebug` class, but this should normally not be necessary (static constructor)
-`xDebug.IsInitialized` should always return `true`
-(checking this value will initialize the class)
+`xDebug.IsInitialized` should always return `true` (checking this value will initialize the class)

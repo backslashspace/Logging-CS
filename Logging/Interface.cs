@@ -28,7 +28,9 @@ namespace BSS.Logging
         internal static void Initialize()
         {
             if (_isInitialized) return;
+#if DEBUG
             if (!xDebug.IsInitialized) throw new InvalidProgramException();
+#endif
 
             _padding = DEFAULT_PADDING_WIDTH;
             _assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -52,7 +54,9 @@ namespace BSS.Logging
         internal static void Initialize(String assemblyPath)
         {
             if (_isInitialized) return;
+#if DEBUG
             if (!xDebug.IsInitialized) throw new InvalidProgramException();
+#endif
 
             _padding = DEFAULT_PADDING_WIDTH;
             _assemblyPath = assemblyPath ?? Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -76,10 +80,11 @@ namespace BSS.Logging
         internal static void Initialize(String assemblyPath, Byte padding = DEFAULT_PADDING_WIDTH)
         {
             if (_isInitialized) return;
+#if DEBUG
             if (!xDebug.IsInitialized) throw new InvalidProgramException();
+#endif
 
             _padding = padding;
-
             _assemblyPath = assemblyPath ?? Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
             if (Directory.Exists($"{_assemblyPath}\\logs"))
@@ -101,7 +106,9 @@ namespace BSS.Logging
         internal static void Initialize(Byte padding = DEFAULT_PADDING_WIDTH)
         {
             if (_isInitialized) return;
+#if DEBUG
             if (!xDebug.IsInitialized) throw new InvalidProgramException();
+#endif
 
             _padding = padding;
             _assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -200,7 +207,7 @@ namespace BSS.Logging
             {
                 lock (_fileLock)
                 {
-                    ColoredDebugPrint(timeStampString, formattedLogMessage.Severity, severityString, source, padding, formattedLogMessage.Message);
+                    ColoredDebugPrint(timeStampString, formattedLogMessage.Severity, severityString!, source, padding, formattedLogMessage.Message);
 
                     using (StreamWriter streamWriter = new($"{_assemblyPath}\\logs\\{timeStamp:dd.MM.yyyy}.txt", true, Encoding.UTF8))
                     {
